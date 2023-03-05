@@ -16,9 +16,9 @@ type HatenaBookmarks = {
   [link: string]: HatenaBookmark;
 };
 
-export const config = {
-  runtime: "edge",
-};
+// export const config = {
+//   runtime: "edge",
+// };
 
 export default async function handler() {
   const json = await fetch("https://b.hatena.ne.jp/hotentry.rss")
