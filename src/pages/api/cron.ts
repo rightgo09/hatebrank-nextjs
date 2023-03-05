@@ -1,6 +1,6 @@
 import { redis } from "lib/upstash";
 import { NextResponse } from "next/server";
-import { xml2js } from "xml-js";
+import { xml2json } from "xml-js";
 
 type HatenaBookmark = {
   title: string;
@@ -21,24 +21,41 @@ export const config = {
 };
 
 export default async function handler() {
-  const xml = await fetch("https://b.hatena.ne.jp/hotentry.rss")
+  const json = await fetch("https://b.hatena.ne.jp/hotentry.rss")
     .then((res) => res.text())
     .then((data) => {
-      return xml2js(data, { compact: true });
+      return JSON.parse(xml2json(data));
     });
+  const items = json.elements[0].elements.filter((e: any) => e.name === "item");
 
   const hbs: HatenaBookmarks = {};
-  for (const item of xml["rdf:RDF"].item) {
+  for (const item of items) {
+    const title = item.elements.find((e: any) => e.name === "title")
+      ?.elements[0].text;
+    const link = item.elements.find((e: any) => e.name === "link")?.elements[0]
+      .text;
+    const description = item.elements.find((e: any) => e.name === "description")
+      ?.elements[0].text;
+    const category = item.elements.find((e: any) => e.name === "dc:subject")
+      ?.elements[0].text;
+    const bookmarkcount = item.elements.find(
+      (e: any) => e.name === "hatena:bookmarkcount"
+    )?.elements[0].text;
+    const imageUrl = item.elements.find(
+      (e: any) => e.name === "hatena:imageurl"
+    )?.elements[0].text;
+    const commentUrl = item.elements.find(
+      (e: any) => e.name === "hatena:bookmarkCommentListPageUrl"
+    )?.elements[0].text;
+
     const hb: HatenaBookmark = {
-      title: item.title._text,
-      link: item.link._text,
-      description: item.description._text,
-      bookmarkcount: parseInt(item["hatena:bookmarkcount"]._text),
-      imageUrl: item["hatena:imageurl"]._text,
-      commentUrl: item["hatena:bookmarkCommentListPageUrl"]._text,
-      category: Array.isArray(item["dc:subject"])
-        ? item["dc:subject"][0]._text
-        : item["dc:subject"]._text,
+      title,
+      link,
+      description,
+      category,
+      imageUrl,
+      commentUrl,
+      bookmarkcount: parseInt(bookmarkcount),
     };
     hbs[hb.link] = hb;
   }
