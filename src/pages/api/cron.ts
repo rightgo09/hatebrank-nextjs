@@ -34,7 +34,7 @@ export default async function handler(
     const link = item.elements.find((e: any) => e.name === "link")?.elements[0]
       .text;
     const description = item.elements.find((e: any) => e.name === "description")
-      ?.elements[0].text;
+      ?.elements?.[0].text;
     const category = item.elements.find((e: any) => e.name === "dc:subject")
       ?.elements[0].text;
     const bookmarkcount = item.elements.find(
