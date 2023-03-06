@@ -1,5 +1,5 @@
 import { redis } from "lib/upstash";
-import { NextResponse } from "next/server";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { xml2json } from "xml-js";
 
 type HatenaBookmark = {
@@ -16,11 +16,10 @@ type HatenaBookmarks = {
   [link: string]: HatenaBookmark;
 };
 
-// export const config = {
-//   runtime: "edge",
-// };
-
-export default async function handler() {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
   const json = await fetch("https://b.hatena.ne.jp/hotentry.rss")
     .then((res) => res.text())
     .then((data) => {
@@ -61,8 +60,6 @@ export default async function handler() {
   }
 
   const ymdh = Math.floor(Date.now() / 3600000); // 1 時間ごとに 1 変わる数字
-  const res = await redis.set(ymdh.toString(), JSON.stringify(hbs));
-  return new NextResponse(JSON.stringify(res), {
-    status: 200,
-  });
+  const redisResult = await redis.set(ymdh.toString(), JSON.stringify(hbs));
+  res.status(200).json({ redisResult });
 }
