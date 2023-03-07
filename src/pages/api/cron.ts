@@ -60,6 +60,8 @@ export default async function handler(
   }
 
   const ymdh = Math.floor(Date.now() / 3600000); // 1 時間ごとに 1 変わる数字
-  const redisResult = await redis.set(ymdh.toString(), JSON.stringify(hbs));
+  const redisResult = await redis.set(ymdh.toString(), JSON.stringify(hbs), {
+    ex: 7200, // 2 時間だけ保存できればよい
+  });
   res.status(200).json({ redisResult });
 }
