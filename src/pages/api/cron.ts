@@ -1,20 +1,8 @@
 import { redis } from "lib/upstash";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { xml2json } from "xml-js";
-
-type HatenaBookmark = {
-  title: string;
-  link: string;
-  description: string;
-  bookmarkcount: number;
-  imageUrl: string;
-  commentUrl: string;
-  category: string;
-};
-
-type HatenaBookmarks = {
-  [link: string]: HatenaBookmark;
-};
+import { HatenaBookmark } from "@/type/HatenaBookmark.type";
+import { HatenaBookmarks } from "@/type/HatenaBookmarks.type";
 
 export default async function handler(
   req: NextApiRequest,
