@@ -8,6 +8,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
+  const ymdh = Math.floor(Date.now() / 3600000).toString(); // 1 時間ごとに 1 変わる数字
+  // すでに取得している場合は、これ以上取得しない
+  if (await redis.get(ymdh)) {
+    return res.status(200).json({ already: 1 });
+  }
+
   const json = await fetch("https://b.hatena.ne.jp/hotentry.rss")
     .then((res) => res.text())
     .then((data) => {
@@ -47,8 +53,7 @@ export default async function handler(
     hbs[hb.link] = hb;
   }
 
-  const ymdh = Math.floor(Date.now() / 3600000); // 1 時間ごとに 1 変わる数字
-  const redisResult = await redis.set(ymdh.toString(), JSON.stringify(hbs), {
+  const redisResult = await redis.set(ymdh, JSON.stringify(hbs), {
     ex: 7200, // 2 時間だけ保存できればよい
   });
   res.status(200).json({ redisResult });
