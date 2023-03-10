@@ -14,42 +14,10 @@ export default async function handler(
     return res.status(200).json({ already: 1 });
   }
 
-  const json = await fetch("https://b.hatena.ne.jp/hotentry.rss")
-    .then((res) => res.text())
-    .then((data) => {
-      return JSON.parse(xml2json(data));
-    });
-  const items = json.elements[0].elements.filter((e: any) => e.name === "item");
-
   const hbs: HatenaBookmarks = {};
+  const items = await getItems("https://b.hatena.ne.jp/hotentry.rss");
   for (const item of items) {
-    const title = item.elements.find((e: any) => e.name === "title")
-      ?.elements[0].text;
-    const link = item.elements.find((e: any) => e.name === "link")?.elements[0]
-      .text;
-    const description = item.elements.find((e: any) => e.name === "description")
-      ?.elements?.[0].text;
-    const category = item.elements.find((e: any) => e.name === "dc:subject")
-      ?.elements[0].text;
-    const bookmarkcount = item.elements.find(
-      (e: any) => e.name === "hatena:bookmarkcount"
-    )?.elements[0].text;
-    const imageUrl = item.elements.find(
-      (e: any) => e.name === "hatena:imageurl"
-    )?.elements[0].text;
-    const commentUrl = item.elements.find(
-      (e: any) => e.name === "hatena:bookmarkCommentListPageUrl"
-    )?.elements[0].text;
-
-    const hb: HatenaBookmark = {
-      title,
-      link,
-      description,
-      category,
-      imageUrl,
-      commentUrl,
-      bookmarkcount: parseInt(bookmarkcount),
-    };
+    const hb: HatenaBookmark = convertItem(item);
     hbs[hb.link] = hb;
   }
 
@@ -57,4 +25,40 @@ export default async function handler(
     ex: 7200, // 2 時間だけ保存できればよい
   });
   res.status(200).json({ redisResult });
+}
+
+async function getItems(url: string): Promise<any> {
+  const json = await fetch(url)
+    .then((res) => res.text())
+    .then((data) => JSON.parse(xml2json(data)));
+  return json.elements[0].elements.filter((e: any) => e.name === "item");
+}
+
+function convertItem(item: any): HatenaBookmark {
+  const title = item.elements.find((e: any) => e.name === "title")?.elements[0]
+    .text;
+  const link = item.elements.find((e: any) => e.name === "link")?.elements[0]
+    .text;
+  const description = item.elements.find((e: any) => e.name === "description")
+    ?.elements?.[0].text;
+  const category = item.elements.find((e: any) => e.name === "dc:subject")
+    ?.elements[0].text;
+  const bookmarkcount = item.elements.find(
+    (e: any) => e.name === "hatena:bookmarkcount"
+  )?.elements[0].text;
+  const imageUrl = item.elements.find((e: any) => e.name === "hatena:imageurl")
+    ?.elements[0].text;
+  const commentUrl = item.elements.find(
+    (e: any) => e.name === "hatena:bookmarkCommentListPageUrl"
+  )?.elements[0].text;
+
+  return {
+    title,
+    link,
+    description,
+    category,
+    imageUrl,
+    commentUrl,
+    bookmarkcount: parseInt(bookmarkcount),
+  };
 }
