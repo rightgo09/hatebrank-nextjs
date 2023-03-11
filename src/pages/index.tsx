@@ -28,10 +28,10 @@ export default function Home() {
       <main>
         <ol>
           {data &&
-            Object.entries(data).map(([key, value]) => {
+            data.map((d: any) => {
               return (
-                <li className='entry' key={key}>
-                  <Article hatebData={value}></Article>
+                <li className='entry' key={d.link}>
+                  <Article hatebData={d}></Article>
                 </li>
               );
             })}
