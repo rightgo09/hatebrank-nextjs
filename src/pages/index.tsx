@@ -1,6 +1,7 @@
 import Head from "next/head";
 import useSWR from "swr";
 import Article from "@/components/article";
+import styles from "@/styles/Home.module.css";
 
 export default function Home() {
   const { data } = useSWR("/api/data", (url) =>
@@ -20,7 +21,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <header>
-        <h1>はてブ毎時ランキング</h1>
+        <h1 className={styles.page_title}>はてブ毎時ランキング</h1>
         <div>
           <small>YYYY/MM/DD HH:MM 更新</small>
         </div>
@@ -30,7 +31,7 @@ export default function Home() {
           {data &&
             data.map((d: any) => {
               return (
-                <li className='entry' key={d.link}>
+                <li className={styles.entry} key={d.link}>
                   <Article hatebData={d}></Article>
                 </li>
               );
