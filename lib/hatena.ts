@@ -16,7 +16,7 @@ const urls: string[] = [
   "https://b.hatena.ne.jp/hotentry/social.rss",
 ];
 
-export async function storeData(ymdh: string): Promise<string | null> {
+export async function storeData(ymdh: string): Promise<HatenaBookmark[]> {
   const hbs: HatenaBookmarks = {};
 
   for (const f of urls) {
@@ -35,9 +35,12 @@ export async function storeData(ymdh: string): Promise<string | null> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  return await redis.set(ymdh, JSON.stringify(Object.values(hbs)), {
+  const result = Object.values(hbs);
+  await redis.set(ymdh, JSON.stringify(result), {
     ex: 7200, // 2 時間だけ保存できればよい
   });
+
+  return result;
 }
 
 async function getItems(url: string): Promise<any> {

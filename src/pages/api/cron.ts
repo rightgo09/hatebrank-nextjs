@@ -12,7 +12,7 @@ export default async function handler(
     return res.status(200).json({ already: 1 });
   }
 
-  const redisResult = await storeData(ymdh);
+  await storeData(ymdh);
 
-  res.status(200).json({ redisResult });
+  res.status(200).json({ redisResult: "OK" });
 }
