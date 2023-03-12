@@ -1,6 +1,17 @@
 import styles from "@/styles/Home.module.css";
 
 export default function Article({ hatebData }: any) {
+  function diffBookmarkcountSymbol(hatebData: {
+    diffBookmarkcount: number;
+  }): string {
+    if (hatebData.diffBookmarkcount === 0) {
+      return "→";
+    } else if (hatebData.diffBookmarkcount > 0) {
+      return "↑";
+    }
+    return "↓";
+  }
+
   return (
     <>
       <div>
@@ -23,7 +34,10 @@ export default function Article({ hatebData }: any) {
             {hatebData.bookmarkcount} users
           </a>
         </span>
-        <span className='addbkcnt'>()</span>
+        <span className='addbkcnt'>
+          ({diffBookmarkcountSymbol(hatebData)}
+          {hatebData.diffBookmarkcount})
+        </span>
         <span
           className={`${styles.category} ${
             styles["category-" + hatebData.category]
@@ -31,7 +45,9 @@ export default function Article({ hatebData }: any) {
         >
           {hatebData.category}
         </span>
-        <span className={styles.new}>New!</span>
+        {hatebData.bookmarkcount === hatebData.diffBookmarkcount && (
+          <span className={styles.new}>New!</span>
+        )}
       </div>
       <div className={styles.dsc}>{hatebData.description}</div>
     </>
