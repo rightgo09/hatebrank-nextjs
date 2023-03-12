@@ -23,7 +23,7 @@ export default function Home() {
       <header>
         <h1 className={styles.page_title}>はてブ毎時ランキング</h1>
         <div>
-          <small>YYYY/MM/DD HH:MM 更新</small>
+          <small>{now()} のデータ</small>
         </div>
       </header>
       <main>
@@ -44,4 +44,21 @@ export default function Home() {
       <footer>Created by rightgo09</footer>
     </>
   );
+}
+
+/**
+ * ChatGPT generated
+ * @returns string YYYY/MM/DD HH:00
+ */
+function now(): string {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = ("0" + (now.getMonth() + 1)).slice(-2);
+  const day = ("0" + now.getDate()).slice(-2);
+
+  const hour = ("0" + now.getHours()).slice(-2);
+  const minute = "00";
+
+  return `${year}/${month}/${day} ${hour}:${minute}`;
 }
