@@ -32,7 +32,7 @@ export async function storeData(ymdh: string): Promise<HatenaBookmark[]> {
         hbs[hb.link] = hb;
       }
     }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   const result = Object.values(hbs);
