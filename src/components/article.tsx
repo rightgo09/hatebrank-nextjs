@@ -34,7 +34,7 @@ export default function Article({ hatebData }: any) {
             {hatebData.bookmarkcount} users
           </a>
         </span>
-        <span className='addbkcnt'>
+        <span className={styles.addbkcnt}>
           ({diffBookmarkcountSymbol(hatebData)}
           {hatebData.diffBookmarkcount})
         </span>
