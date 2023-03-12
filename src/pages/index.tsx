@@ -27,16 +27,19 @@ export default function Home() {
         </div>
       </header>
       <main>
-        <ol>
-          {data &&
-            data.map((d: any) => {
+        {data ? (
+          <ol>
+            {data.map((d: any) => {
               return (
                 <li className={styles.entry} key={d.link}>
                   <Article hatebData={d}></Article>
                 </li>
               );
             })}
-        </ol>
+          </ol>
+        ) : (
+          <div>ロード中</div>
+        )}
       </main>
       <footer>Created by rightgo09</footer>
     </>
