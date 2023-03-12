@@ -75,5 +75,6 @@ function convertItem(item: any): HatenaBookmark {
     imageUrl,
     commentUrl,
     bookmarkcount: parseInt(bookmarkcount),
+    diffBookmarkcount: null,
   };
 }
