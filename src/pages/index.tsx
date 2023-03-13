@@ -3,7 +3,11 @@ import useSWR from "swr";
 import Article from "@/components/article";
 import styles from "@/styles/Home.module.css";
 
-export default function Home() {
+type Props = {
+  now: string;
+};
+
+export default function Home(props: Props) {
   const { data } = useSWR("/api/data", (url) =>
     fetch(url).then((res) => res.json())
   );
@@ -23,7 +27,7 @@ export default function Home() {
       <header>
         <h1 className={styles.page_title}>はてブ毎時ランキング</h1>
         <div>
-          <small>{now()} のデータ</small>
+          <small>{props.now} のデータ</small>
         </div>
       </header>
       <main>
@@ -44,6 +48,15 @@ export default function Home() {
       <footer>Created by rightgo09</footer>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const props: Props = {
+    now: now(),
+  };
+  return {
+    props: props,
+  };
 }
 
 /**
